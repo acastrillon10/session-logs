@@ -1,0 +1,16 @@
+{
+  "name": "session-logs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "session-log": "./src/session-log.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "node --check src/session-log.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
