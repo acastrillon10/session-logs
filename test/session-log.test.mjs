@@ -76,6 +76,27 @@ test("creates a session log from Git context", () => {
   assert.match(note, /https:\/\/github\.com\/example\/example-project\/commit\/[0-9a-f]{40}/);
 });
 
+test("includes every commit in the initial session log", () => {
+  const { repository, vault } = createFixture();
+  writeFileSync(path.join(repository, ".session-log.json"), JSON.stringify({
+    project: "Example Project",
+    parent: "Example Project",
+  }));
+  git(repository, "add", ".session-log.json");
+  for (let index = 1; index <= 101; index += 1) {
+    commitFile(repository, "history.txt", `${index}\n`, `feat: add history entry ${index}`);
+  }
+
+  const result = runSessionLog({ repository, vault });
+
+  assert.equal(result.status, 0, result.stderr);
+  const [name] = readdirSync(path.join(vault, "notes"));
+  const note = readFileSync(path.join(vault, "notes", name), "utf8");
+  assert.match(note, /Initial capture: all commits on the active branch\./);
+  assert.match(note, /feat: add history entry 1\b/);
+  assert.match(note, /feat: add history entry 101\b/);
+});
+
 test("does not create another session log when no work changed", () => {
   const { repository, vault } = createFixture();
   writeFileSync(path.join(repository, ".session-log.json"), JSON.stringify({

@@ -79,7 +79,7 @@ Run the T3Code action at the end of a coding session, or run the command directl
 session-log
 ```
 
-The command writes the note to `<vault>/notes/` and prints its path. It uses commits from the active branch since the preceding session log for that project. The first session log includes the latest 20 commits.
+The command writes the note to `<vault>/notes/` and prints its path. It uses commits from the active branch since the preceding session log for that project. The first session log includes all commits on the active branch.
 
 If the working tree has uncommitted changes but no new commits, the command still creates a session log. If there are no new commits and the working tree is clean, it creates nothing.
 

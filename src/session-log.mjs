@@ -8,7 +8,6 @@ import { createInterface } from "node:readline/promises";
 
 const LOG_SEPARATOR = " — Session Log — ";
 const MAX_COMMIT_ENTRIES = 100;
-const INITIAL_COMMIT_ENTRIES = 20;
 
 function runGit(args, cwd = process.cwd()) {
   try {
@@ -91,8 +90,6 @@ function getCommits({ previousLog, head, repository }) {
     args.push(`${previousLog.endingCommit}..${head}`);
   } else if (previousLog) {
     args.push(`--since=${previousLog.date.toISOString()}`);
-  } else {
-    args.push(`-${INITIAL_COMMIT_ENTRIES}`);
   }
   const output = runGit(args, repository);
   if (!output) return [];
@@ -180,8 +177,8 @@ function formatCommitBody(message) {
 function buildBody({ branch, head, commits, previousLogDate, status, diffStat, stagedDiffStat, remote }) {
   const range = previousLogDate
     ? `Commits since the previous session log (${formatLocalDate(previousLogDate)}).`
-    : `Initial capture: the latest ${INITIAL_COMMIT_ENTRIES} commits on the active branch.`;
-  const displayedCommits = commits.slice(0, MAX_COMMIT_ENTRIES);
+    : "Initial capture: all commits on the active branch.";
+  const displayedCommits = previousLogDate ? commits.slice(0, MAX_COMMIT_ENTRIES) : commits;
   const commitLines = displayedCommits.length ? displayedCommits.map(({ sha, subject, message }) => {
     const shortSha = sha.slice(0, 7);
     const url = getCommitUrl(remote, sha);
